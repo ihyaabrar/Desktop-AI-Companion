@@ -124,6 +124,26 @@ def test_extractor_persist_writes_to_both_stores() -> None:
     assert semantic.get("user_runs") is not None
 
 
+def test_extractor_persist_continues_after_episodic_failure(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A failure in `episodic.add` must NOT prevent semantic facts from being saved."""
+
+    def boom(*_args: object, **_kwargs: object) -> str:
+        raise RuntimeError("simulated embedding failure")
+
+    monkeypatch.setattr(extractor.episodic, "add", boom)
+
+    counts = extractor.persist_extraction(
+        {
+            "episodic": ["this will fail"],
+            "semantic": [{"key": "user_pet", "value": "cat"}],
+        }
+    )
+    assert counts == {"episodic": 0, "semantic": 1}
+    assert semantic.get("user_pet") is not None
+
+
 def test_extractor_should_extract_gates_on_interval_and_min_chars(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:

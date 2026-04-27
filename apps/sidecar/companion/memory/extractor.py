@@ -96,17 +96,33 @@ def should_extract(history: list[dict[str, str]]) -> bool:
     return len(last_user) >= settings.extractor_min_chars
 
 
+def _persist_episodic(text: str) -> bool:
+    """Wrap `episodic.add` so embedding/HTTP failures don't take down the whole pass."""
+    try:
+        episodic.add(text, kind="extracted")
+        return True
+    except Exception as exc:
+        log.warning("extractor: failed to persist episodic item: %s", exc)
+        return False
+
+
 def persist_extraction(extraction: dict[str, Any]) -> dict[str, int]:
-    """Store extracted memories. Returns counts of how many landed in each tier."""
+    """Store extracted memories. Returns counts of how many landed in each tier.
+
+    Each item is persisted independently — a single embedding failure or an
+    invalid semantic key never aborts the whole batch. The LLM extraction cost
+    is already paid; we save what we can.
+    """
     episodic_count = 0
     semantic_count = 0
 
     for item in extraction.get("episodic", []):
+        text: str | None = None
         if isinstance(item, str) and item.strip():
-            episodic.add(item.strip(), kind="extracted")
-            episodic_count += 1
+            text = item.strip()
         elif isinstance(item, dict) and isinstance(item.get("text"), str):
-            episodic.add(item["text"].strip(), kind="extracted")
+            text = item["text"].strip()
+        if text and _persist_episodic(text):
             episodic_count += 1
 
     for fact in extraction.get("semantic", []):
@@ -124,6 +140,8 @@ def persist_extraction(extraction: dict[str, Any]) -> dict[str, int]:
             semantic_count += 1
         except ValueError as exc:
             log.warning("extractor: skipping invalid semantic key %r: %s", key, exc)
+        except Exception as exc:
+            log.warning("extractor: failed to persist semantic key %r: %s", key, exc)
 
     return {"episodic": episodic_count, "semantic": semantic_count}
 
