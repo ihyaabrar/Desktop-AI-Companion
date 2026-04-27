@@ -78,3 +78,51 @@ export async function checkHealth(): Promise<{
     version: string;
   }>;
 }
+
+// ----------------------------- Personality -----------------------------------
+
+export type RelationshipType = "friend" | "sibling" | "partner" | "mentor" | "cat" | "other";
+export type CardLanguage = "id" | "en" | "mixed";
+
+export interface CompanionCard {
+  name: string;
+  pronouns: string;
+  relationship_type: RelationshipType;
+  tone: string[];
+  backstory: string;
+  speech_quirks: string[];
+  boundaries: string[];
+  language: CardLanguage;
+}
+
+export const DEFAULT_CARD: CompanionCard = {
+  name: "Companion",
+  pronouns: "they/them",
+  relationship_type: "friend",
+  tone: ["warm", "playful", "concise"],
+  backstory: "",
+  speech_quirks: [],
+  boundaries: [],
+  language: "mixed",
+};
+
+export async function getCard(): Promise<CompanionCard | null> {
+  const resp = await fetch(`${SIDECAR_URL}/personality/card`);
+  if (!resp.ok) throw new Error(`getCard failed: ${resp.status}`);
+  return (await resp.json()) as CompanionCard | null;
+}
+
+export async function saveCard(card: CompanionCard): Promise<CompanionCard> {
+  const resp = await fetch(`${SIDECAR_URL}/personality/card`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(card),
+  });
+  if (!resp.ok) throw new Error(`saveCard failed: ${resp.status}`);
+  return (await resp.json()) as CompanionCard;
+}
+
+export async function resetCard(): Promise<void> {
+  const resp = await fetch(`${SIDECAR_URL}/personality/card`, { method: "DELETE" });
+  if (!resp.ok) throw new Error(`resetCard failed: ${resp.status}`);
+}

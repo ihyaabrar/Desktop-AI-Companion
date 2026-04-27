@@ -1,6 +1,9 @@
 {
   "app": {
-    "title": "Pendamping AI Desktop"
+    "title": "Pendamping AI Desktop",
+    "loading": "Memuat…",
+    "openSettings": "Ubah pendamping",
+    "sidecarUnreachable": "Tidak bisa memuat pengaturan pendamping."
   },
   "chat": {
     "placeholder": "Ketik sesuatu ke pendampingmu…",
@@ -10,5 +13,37 @@
     "thinking": "berpikir…",
     "errorPrefix": "Error: ",
     "connectionError": "Tidak bisa terhubung ke sidecar. Pastikan dia berjalan di port 8765."
+  },
+  "card": {
+    "title": "Atur pendampingmu",
+    "subtitle": "Pilih nama, gaya bicara, dan latar belakangnya. Bisa diubah kapan saja lewat ikon gear.",
+    "name": "Nama",
+    "pronouns": "Kata ganti",
+    "relationship": "Hubungan",
+    "language": "Bahasa",
+    "tone": "Gaya bicara (satu per baris)",
+    "tonePlaceholder": "hangat\nceria\nsingkat",
+    "backstory": "Latar belakang (opsional)",
+    "backstoryPlaceholder": "Paragraf pendek tentang dia.",
+    "quirks": "Ciri khas bicara (satu per baris, opsional)",
+    "quirksPlaceholder": "memanggil kamu 'sayang'\nselalu pakai huruf kecil",
+    "boundaries": "Batasan tegas (satu per baris, opsional)",
+    "boundariesPlaceholder": "tidak roleplay kekerasan\ntidak memberi nasihat medis",
+    "save": "Simpan",
+    "saving": "Menyimpan…",
+    "cancel": "Batal",
+    "relationshipOptions": {
+      "friend": "Teman",
+      "sibling": "Saudara",
+      "partner": "Pasangan",
+      "mentor": "Mentor",
+      "cat": "Kucing",
+      "other": "Lainnya"
+    },
+    "languageOptions": {
+      "id": "Hanya Indonesia",
+      "en": "Hanya Inggris",
+      "mixed": "Ikuti bahasaku"
+    }
   }
 }

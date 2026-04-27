@@ -1,9 +1,8 @@
 """Builds the message list sent to the LLM for a given chat turn.
 
-In M0 this is intentionally minimal: a hard-coded system prompt + recent in-memory
-history. In M1 it'll pull the personality card from SQLite, in M2 it'll inject
-episodic memory recall + semantic profile, and in M5 it'll include the latest
-screen-vision note.
+The system prompt is compiled from the Personality module's CompanionCard. In M2
+this builder will also inject episodic memory recall + semantic profile, and in
+M5 it'll include the latest screen-vision note.
 """
 
 from __future__ import annotations
@@ -11,12 +10,8 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from collections.abc import Iterable
 
-# Placeholder system prompt. Module 3 (Personality) replaces this with a compiled
-# companion-card prompt.
-DEFAULT_SYSTEM_PROMPT = (
-    "You are a warm, attentive desktop companion. Keep replies short and conversational. "
-    "Match the user's language (Indonesian or English). Avoid lists unless asked."
-)
+from companion.personality.card import get_or_default
+from companion.personality.prompt_compiler import compile_system_prompt
 
 # Per-session sliding window of recent turns. Kept tiny in M0; persistent storage lands in M2.
 _HISTORY_LIMIT = 20
@@ -35,7 +30,8 @@ def get_history(session_id: str) -> list[dict[str, str]]:
 
 def build_messages(session_id: str, user_message: str) -> list[dict[str, str]]:
     """Compose the message list for the next LLM call."""
-    messages: list[dict[str, str]] = [{"role": "system", "content": DEFAULT_SYSTEM_PROMPT}]
+    system_prompt = compile_system_prompt(get_or_default())
+    messages: list[dict[str, str]] = [{"role": "system", "content": system_prompt}]
     messages.extend(get_history(session_id))
     messages.append({"role": "user", "content": user_message})
     return messages

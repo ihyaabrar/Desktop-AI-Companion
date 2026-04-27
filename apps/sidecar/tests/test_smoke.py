@@ -12,11 +12,6 @@ from companion.conversation import context_builder, engine
 from companion.main import app
 
 
-@pytest.fixture(autouse=True)
-def _reset_history() -> None:
-    context_builder.reset()
-
-
 def test_health_endpoint() -> None:
     with TestClient(app) as client:
         resp = client.get("/health")

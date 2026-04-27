@@ -35,5 +35,8 @@ class Settings(BaseSettings):
     max_tokens: int = 1024
     temperature: float = 0.7
 
+    # Storage
+    data_dir: str = "./data"
+
 
 settings = Settings()
