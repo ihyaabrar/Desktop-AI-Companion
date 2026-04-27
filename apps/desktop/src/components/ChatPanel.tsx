@@ -35,9 +35,7 @@ export function ChatPanel() {
     setBusy(true);
 
     const updateAssistant = (mut: (m: Message) => Message) => {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === assistantId ? mut(m) : m)),
-      );
+      setMessages((prev) => prev.map((m) => (m.id === assistantId ? mut(m) : m)));
     };
 
     try {
@@ -84,13 +82,8 @@ export function ChatPanel() {
     <section className="chat-panel">
       <ol className="chat-log" aria-live="polite">
         {messages.map((m) => (
-          <li
-            key={m.id}
-            className={`chat-msg chat-msg--${m.role}${m.error ? " chat-msg--error" : ""}`}
-          >
-            <span className="chat-msg__role">
-              {m.role === "user" ? t("chat.you") : t("chat.companion")}
-            </span>
+          <li key={m.id} className={`chat-msg chat-msg--${m.role}${m.error ? " chat-msg--error" : ""}`}>
+            <span className="chat-msg__role">{m.role === "user" ? t("chat.you") : t("chat.companion")}</span>
             <span className="chat-msg__text">
               {m.text || (m.pending ? <em>{t("chat.thinking")}</em> : null)}
             </span>
@@ -106,11 +99,7 @@ export function ChatPanel() {
           placeholder={t("chat.placeholder")}
           disabled={busy}
         />
-        <button
-          type="button"
-          onClick={() => void handleSend()}
-          disabled={busy || !input.trim()}
-        >
+        <button type="button" onClick={() => void handleSend()} disabled={busy || !input.trim()}>
           {t("chat.send")}
         </button>
       </div>

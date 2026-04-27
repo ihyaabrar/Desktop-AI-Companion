@@ -1,8 +1,6 @@
 // Tiny client for the Python sidecar. Talks to it over plain HTTP on localhost.
 
-const SIDECAR_URL =
-  (import.meta.env.VITE_SIDECAR_URL as string | undefined) ??
-  "http://127.0.0.1:8765";
+const SIDECAR_URL = (import.meta.env.VITE_SIDECAR_URL as string | undefined) ?? "http://127.0.0.1:8765";
 
 export type ChatEvent =
   | { type: "token"; text: string }
@@ -23,12 +21,7 @@ export interface StreamChatArgs {
  * and invoke `onEvent` for each. Returns a promise that resolves once the
  * stream ends (after the `done` event) or rejects on transport failure.
  */
-export async function streamChat({
-  userMessage,
-  sessionId,
-  signal,
-  onEvent,
-}: StreamChatArgs): Promise<void> {
+export async function streamChat({ userMessage, sessionId, signal, onEvent }: StreamChatArgs): Promise<void> {
   const response = await fetch(`${SIDECAR_URL}/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
