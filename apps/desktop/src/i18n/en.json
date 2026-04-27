@@ -1,6 +1,9 @@
 {
   "app": {
-    "title": "Desktop AI Companion"
+    "title": "Desktop AI Companion",
+    "loading": "Loading…",
+    "openSettings": "Edit companion",
+    "sidecarUnreachable": "Couldn't load companion settings."
   },
   "chat": {
     "placeholder": "Say something to your companion…",
@@ -10,5 +13,37 @@
     "thinking": "thinking…",
     "errorPrefix": "Error: ",
     "connectionError": "Couldn't reach the sidecar. Make sure it's running on port 8765."
+  },
+  "card": {
+    "title": "Set up your companion",
+    "subtitle": "Pick a name, tone, and backstory. You can change this anytime from the gear icon.",
+    "name": "Name",
+    "pronouns": "Pronouns",
+    "relationship": "Relationship",
+    "language": "Language",
+    "tone": "Tone (one per line)",
+    "tonePlaceholder": "warm\nplayful\nconcise",
+    "backstory": "Backstory (optional)",
+    "backstoryPlaceholder": "A short paragraph about who they are.",
+    "quirks": "Speech quirks (one per line, optional)",
+    "quirksPlaceholder": "calls user 'kiddo'\nuses lowercase only",
+    "boundaries": "Hard boundaries (one per line, optional)",
+    "boundariesPlaceholder": "no roleplay of violence\nno medical advice",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "relationshipOptions": {
+      "friend": "Friend",
+      "sibling": "Sibling",
+      "partner": "Partner",
+      "mentor": "Mentor",
+      "cat": "Cat",
+      "other": "Other"
+    },
+    "languageOptions": {
+      "id": "Indonesian only",
+      "en": "English only",
+      "mixed": "Match my language"
+    }
   }
 }

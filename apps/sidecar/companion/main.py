@@ -13,6 +13,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from companion import __version__
 from companion.conversation.engine import stream_reply
+from companion.personality.router import router as personality_router
 from companion.settings import settings
 
 app = FastAPI(title="Companion sidecar", version=__version__)
@@ -24,6 +25,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(personality_router)
 
 
 class ChatRequest(BaseModel):
