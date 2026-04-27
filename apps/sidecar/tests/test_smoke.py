@@ -38,8 +38,8 @@ def test_context_builder_isolates_sessions() -> None:
     assert context_builder.get_history("b") == [{"role": "user", "content": "hi from b"}]
 
 
-def test_build_messages_includes_system_and_user(monkeypatch: pytest.MonkeyPatch) -> None:
-    msgs = context_builder.build_messages("s1", "what's up?")
+async def test_build_messages_includes_system_and_user(monkeypatch: pytest.MonkeyPatch) -> None:
+    msgs = await context_builder.build_messages("s1", "what's up?")
     assert msgs[0]["role"] == "system"
     assert msgs[-1] == {"role": "user", "content": "what's up?"}
 

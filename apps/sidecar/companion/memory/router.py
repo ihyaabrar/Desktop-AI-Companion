@@ -70,7 +70,8 @@ def query_episodic(body: dict[str, Any]) -> list[dict[str, Any]]:
     text = body.get("text")
     if not isinstance(text, str) or not text.strip():
         raise HTTPException(status_code=422, detail="text must be a non-empty string")
-    top_k = body.get("top_k") or settings.episodic_top_k
+    raw_top_k = body.get("top_k")
+    top_k = settings.episodic_top_k if raw_top_k is None else raw_top_k
     return episodic.query(text.strip(), top_k=int(top_k))
 
 

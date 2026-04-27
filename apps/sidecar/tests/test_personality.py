@@ -89,9 +89,9 @@ def test_compile_system_prompt_handles_minimal_card() -> None:
     assert "Hard boundaries" not in prompt
 
 
-def test_context_builder_uses_compiled_card_prompt() -> None:
+async def test_context_builder_uses_compiled_card_prompt() -> None:
     save_card(CompanionCard(name="Echo", language="en"))
-    msgs = context_builder.build_messages("s1", "hello")
+    msgs = await context_builder.build_messages("s1", "hello")
     assert msgs[0]["role"] == "system"
     assert "Echo" in msgs[0]["content"]
     assert "Always respond in English." in msgs[0]["content"]

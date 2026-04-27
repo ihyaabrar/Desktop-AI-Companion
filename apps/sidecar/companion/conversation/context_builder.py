@@ -7,6 +7,7 @@ M5 it'll include the latest screen-vision note.
 
 from __future__ import annotations
 
+import asyncio
 from collections import defaultdict, deque
 from collections.abc import Iterable
 
@@ -29,10 +30,11 @@ def get_history(session_id: str) -> list[dict[str, str]]:
     return list(_history[session_id])
 
 
-def build_messages(session_id: str, user_message: str) -> list[dict[str, str]]:
+async def build_messages(session_id: str, user_message: str) -> list[dict[str, str]]:
     """Compose the message list for the next LLM call."""
     system_prompt = compile_system_prompt(get_or_default())
-    suffix = recall(user_message).to_prompt_suffix()
+    recalled = await asyncio.to_thread(recall, user_message)
+    suffix = recalled.to_prompt_suffix()
     if suffix:
         system_prompt = f"{system_prompt}\n\n{suffix}"
     messages: list[dict[str, str]] = [{"role": "system", "content": system_prompt}]

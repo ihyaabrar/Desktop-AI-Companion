@@ -175,8 +175,14 @@ async def extract_now(history: list[dict[str, str]]) -> dict[str, int]:
     return persist_extraction(extraction)
 
 
+_pending: set[asyncio.Task[dict[str, int]]] = set()
+
+
 def schedule_extraction(history: list[dict[str, str]]) -> asyncio.Task[dict[str, int]] | None:
     """Fire-and-forget the extractor on the current event loop."""
     if not should_extract(history):
         return None
-    return asyncio.create_task(extract_now(list(history)))
+    task = asyncio.create_task(extract_now(list(history)))
+    _pending.add(task)
+    task.add_done_callback(_pending.discard)
+    return task
