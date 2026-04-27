@@ -1,0 +1,14 @@
+{
+  "app": {
+    "title": "Pendamping AI Desktop"
+  },
+  "chat": {
+    "placeholder": "Ketik sesuatu ke pendampingmu…",
+    "send": "Kirim",
+    "you": "Kamu",
+    "companion": "Pendamping",
+    "thinking": "berpikir…",
+    "errorPrefix": "Error: ",
+    "connectionError": "Tidak bisa terhubung ke sidecar. Pastikan dia berjalan di port 8765."
+  }
+}
