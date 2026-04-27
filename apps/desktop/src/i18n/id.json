@@ -3,6 +3,7 @@
     "title": "Pendamping AI Desktop",
     "loading": "Memuat…",
     "openSettings": "Ubah pendamping",
+    "openMemory": "Memori",
     "sidecarUnreachable": "Tidak bisa memuat pengaturan pendamping."
   },
   "chat": {
@@ -45,5 +46,16 @@
       "en": "Hanya Inggris",
       "mixed": "Ikuti bahasaku"
     }
+  },
+  "memory": {
+    "title": "Memori",
+    "close": "Kembali ke chat",
+    "loading": "Memuat memori…",
+    "semanticTitle": "Fakta yang diingat",
+    "semanticEmpty": "Belum ada fakta tersimpan. Ngobrol dulu, nanti pendampingmu mulai mengingat.",
+    "episodicTitle": "Kejadian",
+    "episodicEmpty": "Belum ada kejadian tersimpan.",
+    "deleteFact": "Hapus fakta",
+    "clearEpisodic": "Hapus semua"
   }
 }

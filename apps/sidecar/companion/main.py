@@ -13,6 +13,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from companion import __version__
 from companion.conversation.engine import stream_reply
+from companion.memory.router import router as memory_router
 from companion.personality.router import router as personality_router
 from companion.settings import settings
 
@@ -27,6 +28,7 @@ app.add_middleware(
 )
 
 app.include_router(personality_router)
+app.include_router(memory_router)
 
 
 class ChatRequest(BaseModel):

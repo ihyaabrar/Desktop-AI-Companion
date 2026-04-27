@@ -3,6 +3,7 @@
     "title": "Desktop AI Companion",
     "loading": "Loading…",
     "openSettings": "Edit companion",
+    "openMemory": "Memories",
     "sidecarUnreachable": "Couldn't load companion settings."
   },
   "chat": {
@@ -45,5 +46,16 @@
       "en": "English only",
       "mixed": "Match my language"
     }
+  },
+  "memory": {
+    "title": "Memories",
+    "close": "Back to chat",
+    "loading": "Loading memories…",
+    "semanticTitle": "Known facts",
+    "semanticEmpty": "No facts saved yet. Chat for a while and your companion will start remembering things.",
+    "episodicTitle": "Episodes",
+    "episodicEmpty": "No episodes saved yet.",
+    "deleteFact": "Delete fact",
+    "clearEpisodic": "Clear all"
   }
 }

@@ -38,5 +38,11 @@ class Settings(BaseSettings):
     # Storage
     data_dir: str = "./data"
 
+    # Memory
+    embedding_model: str = "nomic-embed-text"
+    extractor_interval: int = 5
+    episodic_top_k: int = 3
+    extractor_min_chars: int = 20
+
 
 settings = Settings()
