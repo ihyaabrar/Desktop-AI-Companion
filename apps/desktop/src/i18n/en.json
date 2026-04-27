@@ -1,0 +1,14 @@
+{
+  "app": {
+    "title": "Desktop AI Companion"
+  },
+  "chat": {
+    "placeholder": "Say something to your companion…",
+    "send": "Send",
+    "you": "You",
+    "companion": "Companion",
+    "thinking": "thinking…",
+    "errorPrefix": "Error: ",
+    "connectionError": "Couldn't reach the sidecar. Make sure it's running on port 8765."
+  }
+}

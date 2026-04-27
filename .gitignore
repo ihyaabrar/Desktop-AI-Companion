@@ -1,0 +1,50 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.tsbuildinfo
+
+# Rust / Tauri
+target/
+**/target/
+Cargo.lock
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# App data (generated at runtime by users)
+chroma/
+*.sqlite
+*.sqlite-journal
+logs/
+
+# Tauri build artefacts
+apps/desktop/src-tauri/target/
+apps/desktop/src-tauri/gen/
