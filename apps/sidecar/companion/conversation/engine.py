@@ -24,7 +24,7 @@ def _get_router() -> LLMRouter:
 async def stream_reply(session_id: str, user_message: str) -> AsyncIterator[str]:
     """Stream assistant tokens for `user_message`, recording history as we go."""
     context_builder.append_turn(session_id, "user", user_message)
-    messages = context_builder.build_messages(session_id, user_message)
+    messages = await context_builder.build_messages(session_id, user_message)
     # `messages` already includes the user turn we just appended via context_builder,
     # so trim the trailing duplicate before calling the LLM.
     messages = messages[:-1] if messages and messages[-1]["role"] == "user" else messages

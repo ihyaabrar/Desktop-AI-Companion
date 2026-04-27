@@ -193,12 +193,12 @@ def test_recall_returns_empty_when_nothing_stored() -> None:
     assert block.episodic_block == ""
 
 
-def test_context_builder_injects_recall_into_system_prompt() -> None:
+async def test_context_builder_injects_recall_into_system_prompt() -> None:
     save_card(CompanionCard(name="Echo"))
     semantic.upsert("user_name", "Ihya")
     episodic.add("user adopted a cat named Mochi last weekend")
 
-    msgs = context_builder.build_messages("s1", "tell me about my pet")
+    msgs = await context_builder.build_messages("s1", "tell me about my pet")
     system = msgs[0]["content"]
     assert "Echo" in system
     assert "user_name" in system
