@@ -4,6 +4,14 @@ import { ChatPanel } from "./components/ChatPanel";
 import { CompanionCardForm } from "./components/CompanionCardForm";
 import { MemoryInspector } from "./components/MemoryInspector";
 import { type CompanionCard, getCard } from "./lib/api";
+import { invokeCommand, isTauriRuntime } from "./lib/tauri";
+
+const PRESENCE_PREF_KEY = "companion.presence.enabled";
+
+function readPresencePref(): boolean {
+  if (typeof window === "undefined") return false;
+  return window.localStorage.getItem(PRESENCE_PREF_KEY) === "1";
+}
 
 type Mode = "loading" | "onboarding" | "chat" | "settings" | "memory";
 
@@ -12,6 +20,7 @@ export default function App() {
   const [mode, setMode] = useState<Mode>("loading");
   const [card, setCard] = useState<CompanionCard | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [presenceOn, setPresenceOn] = useState<boolean>(() => readPresencePref());
 
   useEffect(() => {
     let cancelled = false;
@@ -34,9 +43,19 @@ export default function App() {
     };
   }, []);
 
+  // Sync the OS-level presence window every time the toggle flips. We persist
+  // the user's choice ourselves so a fresh launch can hydrate without a round
+  // trip to Rust just to read the previous value.
+  useEffect(() => {
+    window.localStorage.setItem(PRESENCE_PREF_KEY, presenceOn ? "1" : "0");
+    void invokeCommand("set_presence_visible", { visible: presenceOn });
+  }, [presenceOn]);
+
   const toggleLang = () => {
     void i18n.changeLanguage(i18n.language === "id" ? "en" : "id");
   };
+
+  const togglePresence = () => setPresenceOn((p) => !p);
 
   const handleSaved = (saved: CompanionCard) => {
     setCard(saved);
@@ -59,6 +78,18 @@ export default function App() {
               >
                 🧠
               </button>
+              {isTauriRuntime() && (
+                <button
+                  type="button"
+                  className={`icon-btn${presenceOn ? " icon-btn--active" : ""}`}
+                  onClick={togglePresence}
+                  aria-pressed={presenceOn}
+                  aria-label={t(presenceOn ? "app.hidePresence" : "app.showPresence")}
+                  title={t(presenceOn ? "app.hidePresence" : "app.showPresence")}
+                >
+                  {presenceOn ? "🪟" : "💤"}
+                </button>
+              )}
               <button
                 type="button"
                 className="icon-btn"

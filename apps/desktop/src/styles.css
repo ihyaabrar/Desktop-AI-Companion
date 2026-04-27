@@ -394,3 +394,71 @@ body,
   color: var(--fg);
   border-color: var(--accent);
 }
+
+/* ----- Presence window (M3) ----- */
+.icon-btn--active {
+  color: var(--fg);
+  border-color: var(--accent);
+  background: #ffffff10;
+}
+
+/*
+ * The presence window is rendered inside Tauri with `transparent: true` and
+ * no decorations, so the document body is transparent and only the
+ * `.presence` tile actually paints. Keep these rules scoped to the
+ * `.presence-body` class so they never leak into the main chat window.
+ */
+.presence-body {
+  background: transparent !important;
+  margin: 0;
+  /* No native chrome — make our own tile the only interactive surface. */
+  cursor: grab;
+}
+
+.presence-body #root {
+  background: transparent;
+}
+
+.presence {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100vh;
+  padding: 12px;
+  /* The whole tile is a Tauri drag region (see Presence.tsx) so the user can
+   * grab anywhere outside the sprite button to reposition it. */
+}
+
+.presence__sprite {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  /* Cancel out the drag region just on the actionable button: a click on the
+   * sprite should focus chat, not start a window drag. */
+  -webkit-app-region: no-drag;
+  filter: drop-shadow(0 8px 18px #0006);
+  transition: transform 120ms ease;
+}
+
+.presence__sprite:hover {
+  transform: translateY(-2px) scale(1.03);
+}
+
+.presence__sprite:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.presence__hint {
+  margin: 0;
+  font-size: 11px;
+  color: var(--fg-dim);
+  background: #00000080;
+  padding: 4px 8px;
+  border-radius: var(--radius);
+  text-align: center;
+  -webkit-app-region: no-drag;
+}

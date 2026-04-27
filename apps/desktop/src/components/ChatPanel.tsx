@@ -1,6 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { streamChat, type ChatEvent } from "../lib/api";
+import { deriveEmotion } from "../lib/emotion";
+import { invokeCommand } from "../lib/tauri";
 
 interface Message {
   id: string;
@@ -33,6 +35,10 @@ export function ChatPanel() {
     setMessages((prev) => [...prev, userMsg, assistantMsg]);
     setInput("");
     setBusy(true);
+    void invokeCommand("emit_emotion", { state: "thinking" });
+
+    let assistantText = "";
+    let hadError = false;
 
     const updateAssistant = (mut: (m: Message) => Message) => {
       setMessages((prev) => prev.map((m) => (m.id === assistantId ? mut(m) : m)));
@@ -44,12 +50,14 @@ export function ChatPanel() {
         sessionId: sessionIdRef.current,
         onEvent: (ev: ChatEvent) => {
           if (ev.type === "token") {
+            assistantText += ev.text;
             updateAssistant((m) => ({
               ...m,
               text: m.text + ev.text,
               pending: false,
             }));
           } else if (ev.type === "error") {
+            hadError = true;
             updateAssistant((m) => ({
               ...m,
               text: t("chat.errorPrefix") + ev.message,
@@ -60,6 +68,7 @@ export function ChatPanel() {
         },
       });
     } catch {
+      hadError = true;
       updateAssistant((m) => ({
         ...m,
         text: t("chat.connectionError"),
@@ -68,6 +77,8 @@ export function ChatPanel() {
       }));
     } finally {
       setBusy(false);
+      const next = hadError ? "sad" : deriveEmotion(assistantText);
+      void invokeCommand("emit_emotion", { state: next });
     }
   }, [busy, input, t]);
 

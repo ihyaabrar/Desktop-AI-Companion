@@ -4,6 +4,8 @@
     "loading": "Memuat…",
     "openSettings": "Ubah pendamping",
     "openMemory": "Memori",
+    "showPresence": "Tampilkan teman melayang",
+    "hidePresence": "Sembunyikan teman melayang",
     "sidecarUnreachable": "Tidak bisa memuat pengaturan pendamping."
   },
   "chat": {
@@ -57,5 +59,9 @@
     "episodicEmpty": "Belum ada kejadian tersimpan.",
     "deleteFact": "Hapus fakta",
     "clearEpisodic": "Hapus semua"
+  },
+  "presence": {
+    "openChat": "Buka chat",
+    "tauriOnlyHint": "Jalankan di aplikasi desktop untuk menempelkan teman ini."
   }
 }

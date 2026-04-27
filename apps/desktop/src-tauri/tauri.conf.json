@@ -12,10 +12,28 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "Desktop AI Companion",
         "width": 420,
         "height": 640,
         "resizable": true
+      },
+      {
+        "label": "presence",
+        "title": "Companion presence",
+        "url": "presence.html",
+        "width": 200,
+        "height": 220,
+        "resizable": false,
+        "decorations": false,
+        "transparent": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "shadow": false,
+        "visible": false,
+        "focus": false,
+        "x": 1500,
+        "y": 800
       }
     ],
     "security": {

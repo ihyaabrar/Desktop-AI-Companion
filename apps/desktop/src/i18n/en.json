@@ -4,6 +4,8 @@
     "loading": "Loading…",
     "openSettings": "Edit companion",
     "openMemory": "Memories",
+    "showPresence": "Show floating buddy",
+    "hidePresence": "Hide floating buddy",
     "sidecarUnreachable": "Couldn't load companion settings."
   },
   "chat": {
@@ -57,5 +59,9 @@
     "episodicEmpty": "No episodes saved yet.",
     "deleteFact": "Delete fact",
     "clearEpisodic": "Clear all"
+  },
+  "presence": {
+    "openChat": "Open chat",
+    "tauriOnlyHint": "Run inside the desktop app to dock this buddy."
   }
 }
