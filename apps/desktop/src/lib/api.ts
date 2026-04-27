@@ -126,3 +126,53 @@ export async function resetCard(): Promise<void> {
   const resp = await fetch(`${SIDECAR_URL}/personality/card`, { method: "DELETE" });
   if (!resp.ok) throw new Error(`resetCard failed: ${resp.status}`);
 }
+
+// ------------------------------- Memory --------------------------------------
+
+export interface SemanticFact {
+  key: string;
+  value: unknown;
+  evidence: string | null;
+  updated_at: string;
+}
+
+export interface EpisodicMemory {
+  id: string;
+  text: string;
+  metadata: Record<string, string>;
+}
+
+export interface MemorySummary {
+  semantic_count: number;
+  episodic_count: number;
+}
+
+export async function getMemorySummary(): Promise<MemorySummary> {
+  const resp = await fetch(`${SIDECAR_URL}/memory/summary`);
+  if (!resp.ok) throw new Error(`getMemorySummary failed: ${resp.status}`);
+  return (await resp.json()) as MemorySummary;
+}
+
+export async function listSemanticFacts(): Promise<SemanticFact[]> {
+  const resp = await fetch(`${SIDECAR_URL}/memory/semantic`);
+  if (!resp.ok) throw new Error(`listSemanticFacts failed: ${resp.status}`);
+  return (await resp.json()) as SemanticFact[];
+}
+
+export async function deleteSemanticFact(key: string): Promise<void> {
+  const resp = await fetch(`${SIDECAR_URL}/memory/semantic/${encodeURIComponent(key)}`, {
+    method: "DELETE",
+  });
+  if (!resp.ok) throw new Error(`deleteSemanticFact failed: ${resp.status}`);
+}
+
+export async function listEpisodicMemories(limit = 50): Promise<EpisodicMemory[]> {
+  const resp = await fetch(`${SIDECAR_URL}/memory/episodic?limit=${limit}`);
+  if (!resp.ok) throw new Error(`listEpisodicMemories failed: ${resp.status}`);
+  return (await resp.json()) as EpisodicMemory[];
+}
+
+export async function clearEpisodicMemories(): Promise<void> {
+  const resp = await fetch(`${SIDECAR_URL}/memory/episodic`, { method: "DELETE" });
+  if (!resp.ok) throw new Error(`clearEpisodicMemories failed: ${resp.status}`);
+}

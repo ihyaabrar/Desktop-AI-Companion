@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import logging
 from collections.abc import AsyncIterator
 
 from companion.conversation import context_builder
 from companion.llm.router import LLMRouter
+from companion.memory import extractor
+
+log = logging.getLogger("companion.conversation.engine")
 
 _router: LLMRouter | None = None
 
@@ -32,3 +36,11 @@ async def stream_reply(session_id: str, user_message: str) -> AsyncIterator[str]
         yield token
 
     context_builder.append_turn(session_id, "assistant", "".join(collected))
+
+    # Fire-and-forget extraction; never blocks the user.
+    try:
+        extractor.schedule_extraction(context_builder.get_history(session_id))
+    except RuntimeError as exc:
+        # `schedule_extraction` needs a running event loop. Should always be true
+        # inside FastAPI; log if we're somehow called outside one.
+        log.warning("could not schedule memory extraction: %s", exc)

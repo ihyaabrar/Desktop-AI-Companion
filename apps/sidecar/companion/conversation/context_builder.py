@@ -10,6 +10,7 @@ from __future__ import annotations
 from collections import defaultdict, deque
 from collections.abc import Iterable
 
+from companion.memory.recall import recall
 from companion.personality.card import get_or_default
 from companion.personality.prompt_compiler import compile_system_prompt
 
@@ -31,6 +32,9 @@ def get_history(session_id: str) -> list[dict[str, str]]:
 def build_messages(session_id: str, user_message: str) -> list[dict[str, str]]:
     """Compose the message list for the next LLM call."""
     system_prompt = compile_system_prompt(get_or_default())
+    suffix = recall(user_message).to_prompt_suffix()
+    if suffix:
+        system_prompt = f"{system_prompt}\n\n{suffix}"
     messages: list[dict[str, str]] = [{"role": "system", "content": system_prompt}]
     messages.extend(get_history(session_id))
     messages.append({"role": "user", "content": user_message})

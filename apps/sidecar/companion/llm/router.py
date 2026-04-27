@@ -63,3 +63,33 @@ class LLMRouter:
             )
             if content:
                 yield content
+
+    async def complete(
+        self,
+        messages: Iterable[dict[str, str]],
+        *,
+        temperature: float | None = None,
+        max_tokens: int | None = None,
+    ) -> str:
+        """Single-shot non-streaming completion. Used by the memory extractor."""
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "messages": list(messages),
+            "stream": False,
+            "temperature": temperature if temperature is not None else settings.temperature,
+            "max_tokens": max_tokens if max_tokens is not None else settings.max_tokens,
+        }
+        if self.model.startswith("ollama/"):
+            kwargs["api_base"] = settings.ollama_api_base
+
+        response = await litellm.acompletion(**kwargs)
+        choices = getattr(response, "choices", None) or response.get("choices", [])
+        if not choices:
+            return ""
+        message = choices[0].get("message") if isinstance(choices[0], dict) else choices[0].message
+        if message is None:
+            return ""
+        content = (
+            message.get("content") if isinstance(message, dict) else getattr(message, "content", "")
+        )
+        return content or ""

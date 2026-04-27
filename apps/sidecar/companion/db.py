@@ -33,6 +33,16 @@ def _ensure_schema(conn: sqlite3.Connection) -> None:
         )
         """
     )
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS semantic_memory (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            evidence TEXT,
+            updated_at TEXT NOT NULL
+        )
+        """
+    )
     conn.commit()
 
 

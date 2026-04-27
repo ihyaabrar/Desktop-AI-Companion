@@ -8,6 +8,7 @@ import pytest
 
 from companion import db
 from companion.conversation import context_builder
+from companion.memory import embeddings, episodic
 from companion.personality import card as card_module
 from companion.settings import settings
 
@@ -18,6 +19,9 @@ def _isolated_data_dir(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     monkeypatch.setattr(settings, "data_dir", str(tmp_path))
     db.reset_for_tests()
     context_builder.reset()
-    # Ensure the card cache (if any) sees the new DB.
     card_module.clear_card()
-    return tmp_path
+    episodic.reset_for_tests()
+    embeddings.set_embedder(embeddings.FakeHashEmbedder())
+    yield tmp_path
+    embeddings.set_embedder(None)
+    episodic.reset_for_tests()

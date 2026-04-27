@@ -289,3 +289,108 @@ body,
   color: var(--fg);
   border-color: var(--accent);
 }
+
+.memory-inspector {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.memory-inspector__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.memory-inspector__header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.memory-inspector__section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memory-inspector__section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memory-inspector__section-header h3 {
+  margin: 0;
+  font-size: 14px;
+  flex: 1;
+}
+
+.memory-inspector__count {
+  font-size: 12px;
+  color: var(--fg-dim);
+  background: var(--bg-elev);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.memory-inspector__empty {
+  color: var(--fg-dim);
+  font-size: 13px;
+  margin: 0;
+  padding: 12px;
+  background: var(--bg-elev);
+  border-radius: var(--radius);
+}
+
+.memory-inspector__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.memory-inspector__fact,
+.memory-inspector__episode {
+  background: var(--bg-elev);
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+}
+
+.memory-inspector__fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.memory-inspector__value {
+  color: var(--fg-dim);
+}
+
+.memory-inspector__evidence {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--fg-dim);
+  font-style: italic;
+}
+
+.btn-ghost--small {
+  padding: 4px 10px;
+  font-size: 12px;
+  background: transparent;
+  color: var(--fg-dim);
+  border: 1px solid #ffffff20;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.btn-ghost--small:hover {
+  color: var(--fg);
+  border-color: var(--accent);
+}

@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ChatPanel } from "./components/ChatPanel";
 import { CompanionCardForm } from "./components/CompanionCardForm";
+import { MemoryInspector } from "./components/MemoryInspector";
 import { type CompanionCard, getCard } from "./lib/api";
 
-type Mode = "loading" | "onboarding" | "chat" | "settings";
+type Mode = "loading" | "onboarding" | "chat" | "settings" | "memory";
 
 export default function App() {
   const { t, i18n } = useTranslation();
@@ -48,15 +49,26 @@ export default function App() {
         <h1>{card?.name ?? t("app.title")}</h1>
         <div className="app-header__actions">
           {mode === "chat" && (
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={() => setMode("settings")}
-              aria-label={t("app.openSettings")}
-              title={t("app.openSettings")}
-            >
-              ⚙
-            </button>
+            <>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setMode("memory")}
+                aria-label={t("app.openMemory")}
+                title={t("app.openMemory")}
+              >
+                🧠
+              </button>
+              <button
+                type="button"
+                className="icon-btn"
+                onClick={() => setMode("settings")}
+                aria-label={t("app.openSettings")}
+                title={t("app.openSettings")}
+              >
+                ⚙
+              </button>
+            </>
           )}
           <button type="button" onClick={toggleLang} className="lang-toggle">
             {i18n.language === "id" ? "EN" : "ID"}
@@ -79,6 +91,7 @@ export default function App() {
         {mode === "settings" && (
           <CompanionCardForm initial={card} onSaved={handleSaved} onCancel={() => setMode("chat")} />
         )}
+        {mode === "memory" && <MemoryInspector onClose={() => setMode("chat")} />}
       </main>
     </div>
   );
