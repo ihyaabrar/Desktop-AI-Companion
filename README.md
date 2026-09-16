@@ -70,8 +70,8 @@ and stops only the process it launched when the app exits. If you already run a
 sidecar at `127.0.0.1:8765`, it is reused and left running.
 
 This source-checkout workflow requires `uv` and the sidecar environment on the
-developer machine. Bundling the sidecar as an `externalBin` for distributable
-installers is the next release-packaging task.
+developer machine. Release builds package the sidecar as a Tauri `externalBin`,
+so end users do not need Python or `uv` installed.
 
 To run the sidecar independently while developing its API:
 
@@ -79,6 +79,19 @@ To run the sidecar independently while developing its API:
 cd apps/sidecar
 uv run uvicorn companion.main:app --host 127.0.0.1 --port 8765 --reload
 ```
+
+## Package the sidecar
+
+The release CI packages the sidecar automatically before building the Tauri
+installer. To make a local binary for the current platform:
+
+```bash
+cd apps/sidecar
+uv run --with pyinstaller python scripts/package_sidecar.py
+```
+
+The generated target-specific binary is placed under
+`apps/desktop/src-tauri/binaries/` and is intentionally not committed.
 
 ## Tests / lint
 

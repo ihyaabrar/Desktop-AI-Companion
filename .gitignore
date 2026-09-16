@@ -22,6 +22,7 @@ venv/
 *.egg-info/
 build/
 dist/
+apps/sidecar/.pyinstaller/
 
 # Env / secrets
 .env
@@ -48,3 +49,4 @@ logs/
 # Tauri build artefacts
 apps/desktop/src-tauri/target/
 apps/desktop/src-tauri/gen/
+apps/desktop/src-tauri/binaries/

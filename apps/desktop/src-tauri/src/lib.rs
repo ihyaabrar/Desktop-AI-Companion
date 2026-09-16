@@ -16,6 +16,7 @@ use std::{
 };
 
 use tauri::{AppHandle, Emitter, Manager, RunEvent};
+use tauri_plugin_shell::{process::CommandChild, ShellExt};
 
 const SIDECAR_HOST: &str = "127.0.0.1";
 const SIDECAR_PORT: u16 = 8765;
@@ -25,14 +26,21 @@ const SIDECAR_POLL_INTERVAL: Duration = Duration::from_millis(200);
 /// The child is present only when this app launched it. A manually started
 /// sidecar is reused and deliberately left alone at shutdown.
 #[derive(Clone, Default)]
-struct SidecarState(Arc<Mutex<Option<Child>>>);
+struct SidecarState(Arc<Mutex<Option<SidecarChild>>>);
+
+enum SidecarChild {
+    Development(Child),
+    Bundled(CommandChild),
+}
 
 pub fn run() {
     let app = tauri::Builder::default()
         .manage(SidecarState::default())
+        .plugin(tauri_plugin_shell::init())
         .setup(|app| {
             let state = app.state::<SidecarState>();
-            start_sidecar(&state).map_err(|error| -> Box<dyn std::error::Error> { Box::new(error) })?;
+            start_sidecar(&app.handle(), &state)
+                .map_err(|error| -> Box<dyn std::error::Error> { Box::new(error) })?;
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -57,12 +65,22 @@ pub fn run() {
 /// Starts the development sidecar and waits until its HTTP health endpoint is
 /// responsive. If the user already launched one on the configured port, reuse
 /// it instead of creating a competing process.
-fn start_sidecar(state: &SidecarState) -> io::Result<()> {
+fn start_sidecar(app: &AppHandle, state: &SidecarState) -> io::Result<()> {
     if sidecar_is_healthy() {
         log::info!("reusing an existing Companion sidecar on port {SIDECAR_PORT}");
         return Ok(());
     }
 
+    let child = if cfg!(debug_assertions) {
+        start_development_sidecar()?
+    } else {
+        start_bundled_sidecar(app)?
+    };
+    *state.0.lock().expect("sidecar state lock poisoned") = Some(child);
+    wait_for_sidecar(state)
+}
+
+fn start_development_sidecar() -> io::Result<SidecarChild> {
     let sidecar_dir = source_sidecar_dir();
     if !sidecar_dir.is_dir() {
         return Err(io::Error::new(
@@ -71,6 +89,7 @@ fn start_sidecar(state: &SidecarState) -> io::Result<()> {
         ));
     }
 
+    let port = SIDECAR_PORT.to_string();
     let child = Command::new("uv")
         .args([
             "run",
@@ -79,7 +98,7 @@ fn start_sidecar(state: &SidecarState) -> io::Result<()> {
             "--host",
             SIDECAR_HOST,
             "--port",
-            &SIDECAR_PORT.to_string(),
+            &port,
         ])
         .current_dir(&sidecar_dir)
         .stdin(Stdio::null())
@@ -93,8 +112,19 @@ fn start_sidecar(state: &SidecarState) -> io::Result<()> {
             )
         })?;
 
-    *state.0.lock().expect("sidecar state lock poisoned") = Some(child);
-    wait_for_sidecar(state)
+    Ok(SidecarChild::Development(child))
+}
+
+fn start_bundled_sidecar(app: &AppHandle) -> io::Result<SidecarChild> {
+    let port = SIDECAR_PORT.to_string();
+    let (_, child) = app
+        .shell()
+        .sidecar("companion-sidecar")
+        .map_err(|error| io::Error::other(format!("could not find bundled sidecar: {error}")))?
+        .args(["--host", SIDECAR_HOST, "--port", &port])
+        .spawn()
+        .map_err(|error| io::Error::other(format!("could not start bundled sidecar: {error}")))?;
+    Ok(SidecarChild::Bundled(child))
 }
 
 fn source_sidecar_dir() -> PathBuf {
@@ -113,7 +143,9 @@ fn wait_for_sidecar(state: &SidecarState) -> io::Result<()> {
             return Ok(());
         }
 
-        if let Some(child) = state.0.lock().expect("sidecar state lock poisoned").as_mut() {
+        if let Some(SidecarChild::Development(child)) =
+            state.0.lock().expect("sidecar state lock poisoned").as_mut()
+        {
             if let Some(status) = child.try_wait()? {
                 return Err(io::Error::other(format!(
                     "Companion sidecar exited during startup with status {status}"
@@ -151,11 +183,18 @@ fn sidecar_is_healthy() -> bool {
 fn stop_sidecar(state: &SidecarState) {
     let mut child = state.0.lock().expect("sidecar state lock poisoned").take();
     if let Some(child) = child.as_mut() {
-        if let Err(error) = child.kill() {
+        let result = match child {
+            SidecarChild::Development(child) => {
+                let result = child.kill();
+                let _ = child.wait();
+                result
+            }
+            SidecarChild::Bundled(child) => child.kill(),
+        };
+        if let Err(error) = result {
             // The process may already have exited, which needs no recovery.
             log::debug!("could not stop Companion sidecar: {error}");
         }
-        let _ = child.wait();
     }
 }
 

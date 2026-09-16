@@ -78,9 +78,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - uses: astral-sh/setup-uv@v3
+        with:
+          version: "0.4.x"
       - uses: dtolnay/rust-toolchain@stable
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: apps/desktop/src-tauri -> target
       - run: npm ci || npm install
+      - name: Package Python sidecar
+        working-directory: apps/sidecar
+        run: uv run --with pyinstaller python scripts/package_sidecar.py
       - run: npm run tauri build -- --ci
