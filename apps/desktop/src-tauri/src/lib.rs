@@ -20,7 +20,8 @@ use tauri_plugin_shell::{process::CommandChild, ShellExt};
 
 const SIDECAR_HOST: &str = "127.0.0.1";
 const SIDECAR_PORT: u16 = 8765;
-const SIDECAR_STARTUP_TIMEOUT: Duration = Duration::from_secs(15);
+// Cold starts may need to initialise Python's larger LLM/vector dependencies.
+const SIDECAR_STARTUP_TIMEOUT: Duration = Duration::from_secs(90);
 const SIDECAR_POLL_INTERVAL: Duration = Duration::from_millis(200);
 
 /// The child is present only when this app launched it. A manually started
@@ -105,8 +106,10 @@ fn start_development_sidecar() -> io::Result<SidecarChild> {
         ])
         .current_dir(&sidecar_dir)
         .stdin(Stdio::null())
-        .stdout(Stdio::null())
-        .stderr(Stdio::null())
+        // Keep development-side output visible in the terminal; release builds
+        // use the bundled sidecar path below and remain windowed.
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .spawn()
         .map_err(|error| {
             io::Error::new(
@@ -164,7 +167,7 @@ fn wait_for_sidecar(state: &SidecarState) -> io::Result<()> {
     stop_sidecar(state);
     Err(io::Error::new(
         io::ErrorKind::TimedOut,
-        "Companion sidecar did not become healthy within 15 seconds",
+        "Companion sidecar did not become healthy within 90 seconds",
     ))
 }
 
