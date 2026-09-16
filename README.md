@@ -58,19 +58,27 @@ npm install
 
 ## Run (dev)
 
-In two terminals:
+After the one-time setup above, start the desktop app:
 
 ```bash
-# terminal 1 — sidecar
-cd apps/sidecar
-uv run uvicorn companion.main:app --host 127.0.0.1 --port 8765 --reload
-
-# terminal 2 — desktop app
 cd apps/desktop
 npm run tauri:dev
 ```
 
-Or, after M1 lands, `npm run tauri:dev` will spawn the sidecar automatically.
+Tauri starts the local Python sidecar automatically, waits for `GET /health`,
+and stops only the process it launched when the app exits. If you already run a
+sidecar at `127.0.0.1:8765`, it is reused and left running.
+
+This source-checkout workflow requires `uv` and the sidecar environment on the
+developer machine. Bundling the sidecar as an `externalBin` for distributable
+installers is the next release-packaging task.
+
+To run the sidecar independently while developing its API:
+
+```bash
+cd apps/sidecar
+uv run uvicorn companion.main:app --host 127.0.0.1 --port 8765 --reload
+```
 
 ## Tests / lint
 

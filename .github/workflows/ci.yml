@@ -47,6 +47,20 @@ jobs:
       - run: npm run typecheck
       - run: npm run build
 
+  desktop-rust:
+    name: Desktop shell (Rust)
+    runs-on: windows-latest
+    defaults:
+      run:
+        working-directory: apps/desktop/src-tauri
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: apps/desktop/src-tauri -> target
+      - run: cargo check
+
   desktop-tauri:
     name: Desktop Tauri build (${{ matrix.os }})
     # Only build native installers on tag pushes — too slow for every PR.

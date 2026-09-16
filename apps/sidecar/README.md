@@ -2,6 +2,10 @@
 
 FastAPI service that exposes the LLM router, memory, vision and voice workers to the Tauri shell over local HTTP.
 
+When launched through `npm run tauri:dev`, the Tauri shell starts this service
+automatically with `uv run uvicorn` and waits for its health endpoint. The
+manual command below remains useful when working on the API with reload.
+
 ```bash
 uv sync
 cp .env.example .env
