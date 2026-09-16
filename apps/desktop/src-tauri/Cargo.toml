@@ -1,6 +1,6 @@
 [package]
 name = "companion-desktop"
-version = "0.0.1"
+version = "0.1.0-alpha.1"
 description = "Desktop AI Companion shell"
 authors = ["Companion contributors"]
 edition = "2021"

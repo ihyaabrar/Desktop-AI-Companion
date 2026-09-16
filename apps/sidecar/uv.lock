@@ -418,7 +418,7 @@ wheels = [
 
 [[package]]
 name = "companion-sidecar"
-version = "0.0.1"
+version = "0.1.0-alpha.1"
 source = { editable = "." }
 dependencies = [
     { name = "chromadb" },

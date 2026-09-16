@@ -1,6 +1,6 @@
 [project]
 name = "companion-sidecar"
-version = "0.0.1"
+version = "0.1.0-alpha.1"
 description = "Python sidecar for the Desktop AI Companion (LLM router, memory, vision, voice)."
 readme = "README.md"
 requires-python = ">=3.11"
