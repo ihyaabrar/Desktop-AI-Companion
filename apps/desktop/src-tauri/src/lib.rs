@@ -85,7 +85,10 @@ fn start_development_sidecar() -> io::Result<SidecarChild> {
     if !sidecar_dir.is_dir() {
         return Err(io::Error::new(
             io::ErrorKind::NotFound,
-            format!("Companion sidecar source was not found at {}", sidecar_dir.display()),
+            format!(
+                "Companion sidecar source was not found at {}",
+                sidecar_dir.display()
+            ),
         ));
     }
 
@@ -143,8 +146,11 @@ fn wait_for_sidecar(state: &SidecarState) -> io::Result<()> {
             return Ok(());
         }
 
-        if let Some(SidecarChild::Development(child)) =
-            state.0.lock().expect("sidecar state lock poisoned").as_mut()
+        if let Some(SidecarChild::Development(child)) = state
+            .0
+            .lock()
+            .expect("sidecar state lock poisoned")
+            .as_mut()
         {
             if let Some(status) = child.try_wait()? {
                 return Err(io::Error::other(format!(
@@ -181,15 +187,17 @@ fn sidecar_is_healthy() -> bool {
 }
 
 fn stop_sidecar(state: &SidecarState) {
-    let mut child = state.0.lock().expect("sidecar state lock poisoned").take();
-    if let Some(child) = child.as_mut() {
+    let child = state.0.lock().expect("sidecar state lock poisoned").take();
+    if let Some(child) = child {
         let result = match child {
-            SidecarChild::Development(child) => {
+            SidecarChild::Development(mut child) => {
                 let result = child.kill();
                 let _ = child.wait();
                 result
             }
-            SidecarChild::Bundled(child) => child.kill(),
+            SidecarChild::Bundled(child) => child
+                .kill()
+                .map_err(|error| io::Error::other(error.to_string())),
         };
         if let Err(error) = result {
             // The process may already have exited, which needs no recovery.
@@ -235,6 +243,7 @@ fn set_presence_visible(app: AppHandle, visible: bool) -> Result<(), String> {
 /// "listening" | "sad"); the frontend type-asserts it.
 #[tauri::command]
 fn emit_emotion(app: AppHandle, state: String) -> Result<(), String> {
-    app.emit("emotion-changed", state).map_err(|e| e.to_string())?;
+    app.emit("emotion-changed", state)
+        .map_err(|e| e.to_string())?;
     Ok(())
 }
